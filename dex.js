@@ -5,9 +5,9 @@ Moralis.start({ serverUrl, appId });
 
 Moralis.initPlugins().then(console.log('Plugins have been initialized'))
 
-const $tokenBalanceTBody = document.querySelector(".js-token-balances");
-const $selectedToken = document.querySelector('.js-from-token');
-const $amountInput = document.querySelector('.js-from-amount')
+const tokenBalanceTBody = document.querySelector(".js-token-balances");
+const selectedToken = document.querySelector('.js-from-token');
+const amountInput = document.querySelector('.js-from-amount')
 
 /* Authentication code */
 async function login() {
@@ -37,12 +37,12 @@ document.querySelector("#btn-logout").addEventListener('click', logOut)
 /* Initialize swap form */
 async function initSwapForm(event) {
     event.preventDefault();
-    $selectedToken.innerText = event.target.dataset.symbol;
-    $selectedToken.dataset.address = event.target.dataset.address;
-    $selectedToken.dataset.decimals = event.target.dataset.decimals;
-    $selectedToken.dataset.max = event.target.dataset.max;
-    $amountInput.removeAttribute('disabled');
-    $amountInput.value = '';
+    selectedToken.innerText = event.target.dataset.symbol;
+    selectedToken.dataset.address = event.target.dataset.address;
+    selectedToken.dataset.decimals = event.target.dataset.decimals;
+    selectedToken.dataset.max = event.target.dataset.max;
+    amountInput.removeAttribute('disabled');
+    amountInput.value = '';
     document.querySelector('.js-submit').removeAttribute('disabled');
     document.querySelector('.js-cancel').removeAttribute('disabled');
     document.querySelector('.js-quote-container').innerHTML = '';
@@ -56,7 +56,7 @@ async function getStats() {
     const balances = await Moralis.Web3API.account.getTokenBalances({ chain: 'polygon' });
     console.log(balances)
 
-    $tokenBalanceTBody.innerHTML = balances.map((token, index) => `
+    tokenBalanceTBody.innerHTML = balances.map((token, index) => `
         <tr>
             <td>${index + 1}</td>
             <td>${token.symbol}</td>
@@ -75,7 +75,7 @@ async function getStats() {
         </tr>
     `).join('');
 
-    for (let $btn of $tokenBalanceTBody.querySelectorAll('.js-swap')) {
+    for (let $btn of tokenBalanceTBody.querySelectorAll('.js-swap')) {
         $btn.addEventListener('click', initSwapForm)
     }
 }
@@ -89,8 +89,8 @@ document.getElementById("btn-buy-crypto").addEventListener('click', buyCrypto)
 /** Quote / Swap  */
 async function formSubmitted(event) {
     event.preventDefault()
-    const fromAmount = Number.parseFloat($amountInput.value);
-    const fromMaxValue = Number.parseFloat($selectedToken.dataset.max);
+    const fromAmount = Number.parseFloat(amountInput.value);
+    const fromMaxValue = Number.parseFloat(selectedToken.dataset.max);
     if (Number.isNaN(fromAmount) || fromAmount > fromMaxValue) {
         //invalid input
         document.querySelector('.js-amount-error').innerText = 'Invalid Amount'
@@ -99,8 +99,8 @@ async function formSubmitted(event) {
         document.querySelector('.js-amount-error').innerText = ''
     }
     // submission of the quote request
-    const fromDecimals = $selectedToken.dataset.decimals;
-    const fromTokenAddress = $selectedToken.dataset.address;
+    const fromDecimals = selectedToken.dataset.decimals;
+    const fromTokenAddress = selectedToken.dataset.address;
 
     const [toTokenAddress, toDecimals] = document.querySelector('[name=to-token]').value.split('-');
 
@@ -130,11 +130,11 @@ async function formCanceled(event) {
     event.preventDefault()
     document.querySelector('.js-submit').setAttribute('disabled', '');
     document.querySelector('.js-cancel').setAttribute('disabled', '');
-    $amountInput.value = '';
-    $amountInput.setAttribute('disabled', '');
-    delete $selectedToken.dataset.address;
-    delete $selectedToken.dataset.decimals;
-    delete $selectedToken.dataset.max;
+    amountInput.value = '';
+    amountInput.setAttribute('disabled', '');
+    delete selectedToken.dataset.address;
+    delete selectedToken.dataset.decimals;
+    delete selectedToken.dataset.max;
     document.querySelector('.js-quote-container').innerHTML = '';
     document.querySelector('.js-amount-error').innerText = ''
 }
